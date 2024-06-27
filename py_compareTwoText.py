@@ -28,7 +28,7 @@ class CompareTwoText:
     def _removePunctuation(self, text):
         text = re.sub(r'[^\w\s]', '', text)
         text = text.replace('_', ' ')
-        text = text.replace('  ', ' ')
+        text = ' '.join(text.split())
         text = text.replace('.', ' ')
         return text
     
