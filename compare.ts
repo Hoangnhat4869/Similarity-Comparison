@@ -59,8 +59,8 @@ const { performance } = require("perf_hooks");
 const start = performance.now();
 TSRunning("./nametest.csv");
 const end = performance.now();
-console.log(`Time to run TS script: ${end - start}ms`);
+console.log(`Time to run TS script: ${end - start}ms`); // 25ms
 
 setTimeout(() => {
     pythonRunning("./output.csv");
-}, 1000);
+}, 1000);                                               // 7.4s
