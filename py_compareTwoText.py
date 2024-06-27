@@ -1,6 +1,5 @@
 import pandas as pd
 import re
-from pyvi import ViTokenizer
 import sys
 
 from functools import wraps
@@ -30,21 +29,23 @@ class CompareTwoText:
         text = re.sub(r'[^\w\s]', '', text)
         text = text.replace('_', ' ')
         text = text.replace('  ', ' ')
+        text = text.replace('.', ' ')
         return text
     
     def _removeAccents(self, text):
-        s = ''
-        for c in text:
-            if c in self.s1:
-                s += self.s0[self.s1.index(c)]
-            else:
-                s += c
-        return s
+        text = re.sub(u'[àáảãạăắằẳẵặâầấẩẫậÀÁẢÃẠĂẮẰẲẴẶÂẦẤẨẪẬ]', 'a', text)
+        text = re.sub(u'[èéẻẽẹêềếểễệÈÉẺẼẸÊỀẾỂỄỆ]', 'e', text)
+        text = re.sub(u'[ìíỉĩịÌÍỈĨỊ]', 'i', text)
+        text = re.sub(u'[òóỏõọôồốổỗộơờớởỡợÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢ]', 'o', text)
+        text = re.sub(u'[ùúủũụưừứửữựÙÚỦŨỤƯỪỨỬỮỰ]', 'u', text)
+        text = re.sub(u'[ỳýỷỹỵỲÝỶỸỴ]', 'y', text)
+        text = re.sub(u'[đĐ]', 'd', text)
+        return text
 
     def _stemming(self, text):
         text = re.split(r'(\d+)', text)
         text = ' '.join(text)
-        return ViTokenizer.tokenize(text)
+        return text
 
     def _preprocess(self, text):
         text = self._convertToLower(text)
@@ -78,8 +79,8 @@ def evaluate_similarity(datapath):
     start_time = time.time()
     dataset['Python code Similarity'] = dataset.apply(lambda x: cmp.compareTwoText(x['ltable_item_name'], x['rtable_item_name']), axis=1)
     end_time = time.time()
-    total_time = end_time - start_time
-    print(f'Function evaluate_similarity Took {total_time:.4f} seconds')
+    total_time = (end_time - start_time) * 1000
+    print(f'Function evaluate_similarity Took {total_time:.4f} ms')
     dataset.to_csv('output.csv', index=False)
 
 evaluate_similarity(sys.argv[1])
